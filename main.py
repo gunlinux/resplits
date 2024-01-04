@@ -16,8 +16,8 @@ def main():
     soap_split = load_split(mega_split_path)
     run = Run(bs=soap_split)
     print(run.GameName)
-    print(run.Offset)
-    print(run.AttemptCount)
+    print(f'attemtpted counts {run.AttemptCount}')
+    print(f'segments count: {run.segments_count}')
 
 
 if __name__ == '__main__':
