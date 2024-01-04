@@ -3,6 +3,7 @@ import sys
 
 from dotenv import load_dotenv
 from ls import load_split
+from models import Run
 
 load_dotenv()
 
@@ -10,10 +11,13 @@ load_dotenv()
 def main():
     mega_split_path = os.environ.get('mega_split')
     if not mega_split_path:
-        print(':X')
+        print('set mega_split in .env')
         sys.exit(1)
     soap_split = load_split(mega_split_path)
-    print(soap_split)
+    run = Run(bs=soap_split)
+    print(run.GameName)
+    print(run.Offset)
+    print(run.AttemptCount)
 
 
 if __name__ == '__main__':
