@@ -13,12 +13,17 @@ def main():
     if not mega_split_path:
         print('set mega_split in .env')
         sys.exit(1)
-    soap_split = load_split(mega_split_path)
-    run = Run(bs=soap_split)
-    print(run.game_name)
-    print(f'attemtpted counts {run.attempt_count}')
-    print(f'segments count: {run.segments_count}')
-    print(run.render())
+    print(mega_split_path)
+    old_soap_split = load_split(mega_split_path)
+    old_run = Run(bs=old_soap_split)
+    old_run.save_to_file('new_split.lss')
+    #print(run.render())
+    new_soap_split = load_split('new_split.lss')
+    new_run = Run(bs=new_soap_split)
+    print(new_run.game_name)
+    print(f'attemtpted counts {new_run.attempt_count}')
+    print(f'segments count: {new_run.segments_count}')
+    print(new_run.render())
 
 
 if __name__ == '__main__':

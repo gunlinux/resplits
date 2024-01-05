@@ -1,21 +1,25 @@
 {% set date_format = '%m/%d/%Y %H:%M:%S' %}
 {% for segment in segments %}
-  <name>{{segment.name}}</name>
-  <icon>{{segment.icon}}</icon>
-  <splittimes>
-    <splittime name="personal best" />
-  </splittimes>
-  <bestsegmenttime>
+<Segment>
+  <Name>{{segment.name}}</Name>
+  <Icon {% if segment.icon %}>{{segment.icon}}</Icon> {% else %} /> {% endif %}
+  <SplitTimes>
+    <SplitTime name="Personal Best" />
+  </SplitTimes>
+  <BestSegmentTime>
     {% if segment.bestsegmenttime -%}
-    <realtime>{{ segment.bestsegmenttime.Realtime }}</realtime>
-    <gametime>{{ segment.bestsegmenttime.Gametime }}</gametime>
+    <RealTime>{{ segment.bestsegmenttime.Realtime }}</RealTime>
+    <GameTime>{{ segment.bestsegmenttime.Gametime }}</GameTime>
     {% endif -%}
-  </bestsegmenttime>
-  <segmenthistory>
+  </BestSegmentTime>
+
+     <SegmentHistory>
     {% for history in segment.segmentshistory -%}
-    <time id="{{ history.id }}">
-      <realtime>{{ history.Realtime }}</realtime>
-      <gametime>{{ history.Gametime }}</gametime>
-    </time>
+    <Time id="{{ history.id }}">
+      <RealTime>{{ history.Realtime }}</RealTime>
+      <GameTime>{{ history.Gametime }}</GameTime>
+    </Time>
     {% endfor -%}
+     </SegmentHistory>
+    </Segment>
 {% endfor -%}

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Run version="1.7.0">
-  <GameIcon>{{obj.game_icon}}</GameIcon>
+  <GameIcon {% if obj.game_icon %}>{{obj.game_icon}}</GameIcon>{% else %}/>{% endif %}
   <GameName>{{obj.game_name}}</GameName>
   <CategoryName>{{obj.category_name}}</CategoryName>
-  <LayoutPath>{{obj.layout_path}}</LayoutPath>
+  <LayoutPath />
+  {# <LayoutPath {% if obj.layout_path -%} >{{obj.layout_path}}</LayoutPath>{% else -%} /> {% endif -%} #}
   <Metadata>
     <Run id="" />
     <Platform usesEmulator="False">PC</Platform>
@@ -15,11 +16,7 @@
   </Metadata>
   <Offset>{{obj.offset}}</Offset>
   <AttemptCount>{{obj.attempt_count}}</AttemptCount>
-  <AttemptHistory>
-   {{attempt_history}}
-  </AttemptHistory>
-  <Segments>
-  {{segments}}
-  </Segments>
+  {{attempt_history}}
+  <Segments>{{segments}}</Segments>
   <AutoSplitterSettings />
 </Run>

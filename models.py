@@ -121,7 +121,7 @@ class Run:
         self.offset = self.__load_value(bsrun.Offset)
         self.attempt_count = self.__load_value(bsrun.AttemptCount)
         self.attempt_history = self.__load_attemtps(bsrun.AttemptHistory)
-        self.segments = self.__load_segments(bsrun.segments)
+        self.segments = self.__load_segments(bsrun.Segments)
 
     def __load_value(self, value, default=None):
         if not value or not value.contents:
@@ -152,6 +152,11 @@ class Run:
                                      attempts=self.attempt_history)
         return render_tpl('run.tpl', obj=self, segments=segments,
                           attempt_history=attempt_history)
+
+    def save_to_file(self, path):
+        render = self.render()
+        with open(path, 'w') as f:
+            f.write(render)
 
     @property
     def segments_count(self):
