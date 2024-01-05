@@ -147,8 +147,9 @@ class Run:
         return segments
 
     def render(self):
-        segments = ''
-        attempt_history = ''
+        segments = render_tpl('segments.tpl', segments=self.segments)
+        attempt_history = render_tpl('attempt_history.tpl',
+                                     attempts=self.attempt_history)
         return render_tpl('run.tpl', obj=self, segments=segments,
                           attempt_history=attempt_history)
 
