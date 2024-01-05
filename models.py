@@ -1,9 +1,18 @@
+import os
+from jinja2 import Template
 from dataclasses import dataclass
 from datetime import datetime
 from bs4 import Tag
 
 
 DATE_FORMAT = '%m/%d/%Y %H:%M:%S'
+TPL_DIR = 'tpls'
+
+
+def render_tpl(tpl, **kwargs):
+    with open(os.path.join(TPL_DIR, tpl)) as file:
+        template = Template(file.read())
+    return template.render(**kwargs)
 
 
 @dataclass
@@ -91,32 +100,32 @@ class Segment:
 
 @dataclass
 class Run:
-    GameIcon: str
-    GameName: str
-    CategoryName: str
-    LayoutPath: str
-    Offset: str
-    AttemptCount: int
-    AttemptHistory: list[Attempt]
-    Segments: list[Segment]
+    offset: str
+    attempt_count: int
+    attempt_history: list[Attempt]
+    segments: list[Segment]
+    game_icon: str = ''
+    game_name: str = ''
+    category_name: str = ''
+    layout_path: str = ''
     # TODO ADD PB
 
     def __init__(self, bs=None):
         if not bs:
             return
         bsrun = bs.Run
-        self.GameIcon = self.__load_value(bsrun.GameIcon)
-        self.GameName = self.__load_value(bsrun.GameName)
-        self.CategoryName = self.__load_value(bsrun.CategoryName)
-        self.LayoutPath = self.__load_value(bsrun.LayoutPath)
-        self.Offset = self.__load_value(bsrun.Offset)
-        self.AttemptCount = self.__load_value(bsrun.AttemptCount)
-        self.AttemptHistory = self.__load_attemtps(bsrun.AttemptHistory)
+        self.game_icon = self.__load_value(bsrun.GameIcon, '')
+        self.game_name = self.__load_value(bsrun.GameName)
+        self.category_name = self.__load_value(bsrun.CategoryName)
+        self.layout_path = self.__load_value(bsrun.LayoutPath)
+        self.offset = self.__load_value(bsrun.Offset)
+        self.attempt_count = self.__load_value(bsrun.AttemptCount)
+        self.attempt_history = self.__load_attemtps(bsrun.AttemptHistory)
         self.segments = self.__load_segments(bsrun.segments)
 
-    def __load_value(self, value):
+    def __load_value(self, value, default=None):
         if not value or not value.contents:
-            return None
+            return default
         return value.contents[0]
 
     def __load_attemtps(self, bs):
@@ -136,6 +145,12 @@ class Run:
 
             segments.append(segment)
         return segments
+
+    def render(self):
+        segments = ''
+        attempt_history = ''
+        return render_tpl('run.tpl', obj=self, segments=segments,
+                          attempt_history=attempt_history)
 
     @property
     def segments_count(self):
