@@ -6,7 +6,7 @@
 - [x] split structure CHAPTER 2
 - [x] split loader
 - [x] split render 
-- [ ] split saver
+- [x] split saver
 - [ ] subsplits to single splits
 - [ ] best run VIEW
 - [ ] megasplit to levels

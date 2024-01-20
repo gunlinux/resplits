@@ -62,11 +62,11 @@ class Attempt:
 
 @dataclass
 class Segment:
+    split_times: dict[str, RunTime]
+    segmentshistory: list[RunTime] = None
     name: str = ''
     icon: str = ''
-    # splittime: afterparty
     bestsegmenttime: RunTime = None
-    segmentshistory = list[RunTime]
 
     def __init__(self, bs=None):
         if bs is None:
@@ -81,6 +81,8 @@ class Segment:
                     self.bestsegmenttime = RunTime(child)
                 if child.name.lower() == 'segmenthistory':
                     self.segmentshistory = self.__get_segments_history(child)
+                if child.name.lower() == 'splittimes':
+                    self.split_times = self.__get_splittimes(child)
 
     def __find(self, bs, name):
         tag = bs.find(name)
@@ -96,6 +98,17 @@ class Segment:
             runtime = RunTime(child)
             runtimes.append(runtime)
         return runtimes
+
+    def __get_splittimes(self, bs):
+        split_times = {}
+        for child in bs.children:
+            if not isinstance(child, Tag):
+                continue
+            name = child.attrs.get('name', None)
+            runtime = RunTime(child)
+            if name:
+               split_times[name] = runtime
+        return split_times
 
 
 @dataclass

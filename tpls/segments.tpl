@@ -4,7 +4,14 @@
   <Name>{{segment.name}}</Name>
   <Icon {% if segment.icon %}>{{segment.icon}}</Icon> {% else %} /> {% endif %}
   <SplitTimes>
-    <SplitTime name="Personal Best" />
+    {% for name, runtime in segment.split_times.items() -%}
+      <SplitTime name="{{ name }}">
+        {% if runtime -%}
+        <RealTime>{{ runtime.Realtime }}</RealTime>
+        <GameTime>{{ runtime.Gametime }}</GameTime>
+        {% endif -%}
+      </SplitTime>
+    {% endfor -%}
   </SplitTimes>
   <BestSegmentTime>
     {% if segment.bestsegmenttime -%}
