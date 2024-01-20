@@ -17,7 +17,6 @@ def main():
     old_soap_split = load_split(mega_split_path)
     old_run = Run(bs=old_soap_split)
     old_run.save_to_file('new_split.lss')
-    #print(run.render())
     new_soap_split = load_split('new_split.lss')
     new_run = Run(bs=new_soap_split)
     print(new_run.game_name)
