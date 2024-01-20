@@ -117,10 +117,10 @@ class Run:
     attempt_count: int
     attempt_history: list[Attempt]
     segments: list[Segment]
+    levels: list[str]
     game_icon: str = ''
     game_name: str = ''
     category_name: str = ''
-    layout_path: str = ''
     # TODO ADD PB
 
     def __init__(self, bs=None):
@@ -135,6 +135,7 @@ class Run:
         self.attempt_count = self.__load_value(bsrun.AttemptCount)
         self.attempt_history = self.__load_attemtps(bsrun.AttemptHistory)
         self.segments = self.__load_segments(bsrun.Segments)
+        self.get_levels()
 
     def __load_value(self, value, default=None):
         if not value or not value.contents:
@@ -158,6 +159,12 @@ class Run:
 
             segments.append(segment)
         return segments
+    def get_levels(self):
+        self.levels = []
+        for segment in self.segments:
+            if segment.name.startswith('C'):
+                self.levels.append(segment.name)
+
 
     def render(self):
         segments = render_tpl('segments.tpl', segments=self.segments)
