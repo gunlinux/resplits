@@ -29,6 +29,19 @@ wrs = {
     "C14": "00:3:54.150",
 }
 
+def get_comp(run, rez):
+    wrs_with_msecs = {level: Run.get_msecs(value) for level, value in wrs.items()}
+    diffs = {}
+    for level, value in wrs_with_msecs.items():
+        diffs[level] = value - rez[level]
+
+    d = dict(sorted(diffs.items(), key=lambda item: item[1]))
+    for item, value in d.items():
+        d[item] = value/1_000_000
+    for item, value in d.items():
+        print(f'{item}: {value}')
+
+
 def main():
     mega_split_path = os.environ.get('mega_split')
     if not mega_split_path:
@@ -37,18 +50,10 @@ def main():
     old_soap_split = load_split(mega_split_path)
     run = Run(bs=old_soap_split)
     rez = run.get_levels_pb()
-    wrs_with_msecs = {level: Run.get_msecs(value) for level, value in wrs.items()}
-    print(wrs_with_msecs)
-    diffs = {}
-    for level, value in wrs_with_msecs.items():
-        diffs[level] = value - rez[level]
-    print(diffs)
-
-    d = dict(sorted(diffs.items(), key=lambda item: item[1]))
-    for item, value in d.items():
-        d[item] = value/1_000_000
-    for item, value in d.items():
-        print(f'{item}: {value}')
+    golds = run.get_levels_golds()
+    get_comp(run, rez)
+    print()
+    get_comp(run, golds)
     print(f'attemtpted counts {run.attempt_count}')
     print(f'segments count: {run.segments_count}')
 

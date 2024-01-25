@@ -170,11 +170,10 @@ class Run:
                 self.levels.append(segment.name)
 
     def get_level_pb(self, name):
-        # get full level best time
+        # get full level personal best time
         runs = {}
         calc = {}
         for segment in self.segments:
-            print(segment.name)
             if segment.name.startswith(f'-{name}_') or segment.name == name:
                 for time in segment.segmentshistory:
                     if runs.get(time.id):
@@ -190,8 +189,20 @@ class Run:
             filtered.append(v)
         return self.msecs_to_str(min(filtered))
 
+    def get_level_bs(self, name):
+        # get full level GOLDTIME
+        gold = 0
+        for segment in self.segments:
+            if segment.name.startswith(f'-{name}_') or segment.name == name:
+                gold += segment.bestsegmenttime.get_gametime()
+        return gold
+
+
     def get_levels_pb(self):
         return {level: self.get_msecs(self.get_level_pb(level)) for level in self.levels}
+
+    def get_levels_golds(self):
+        return {level: self.get_level_bs(level) for level in self.levels}
 
     def render(self):
         segments = render_tpl('segments.tpl', segments=self.segments)
