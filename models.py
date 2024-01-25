@@ -1,7 +1,7 @@
 import os
 from jinja2 import Template
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timedelta
 from bs4 import Tag
 
 
@@ -36,6 +36,9 @@ class RunTime:
             id_from_bs = bs.attrs.get('id', None)
             if id_from_bs:
                 self.id = int(id_from_bs)
+
+    def get_gametime(self):
+        return Run.get_msecs(self.Gametime)
 
 
 @dataclass
@@ -107,7 +110,7 @@ class Segment:
             name = child.attrs.get('name', None)
             runtime = RunTime(child)
             if name:
-               split_times[name] = runtime
+                split_times[name] = runtime
         return split_times
 
 
@@ -159,12 +162,34 @@ class Run:
 
             segments.append(segment)
         return segments
+
     def get_levels(self):
         self.levels = []
         for segment in self.segments:
             if segment.name.startswith('C'):
                 self.levels.append(segment.name)
 
+    def get_level_pb(self, name):
+        runs = {}
+        calc = {}
+        for segment in self.segments:
+            if segment.name.startswith(f'-{name}_'):
+                for time in segment.segmentshistory:
+                    if runs.get(time.id):
+                        runs[time.id] += time.get_gametime()
+                    else:
+                        runs[time.id] = time.get_gametime()
+                    calc[time.id] = calc[time.id] + 1 if calc.get(time.id) else 1
+
+        filtered = []
+        for k,  v in runs.items():
+            if calc[k] < max(calc.values()):
+                continue
+            filtered.append(v)
+        return self.msecs_to_str(min(filtered))
+
+    def get_levels_pb(self):
+        return {level: self.get_msecs(self.get_level_pb(level)) for level in self.levels}
 
     def render(self):
         segments = render_tpl('segments.tpl', segments=self.segments)
@@ -181,3 +206,16 @@ class Run:
     @property
     def segments_count(self):
         return len(self.segments)
+
+    @staticmethod
+    def get_msecs(time: str) -> int:
+        if len(time) == 8:
+            time = f'{time}.0000000'
+        temp = datetime.strptime(time[:15], '%H:%M:%S.%f')
+        microseconds = (temp.hour*60*60 + temp.minute*60 + temp.second)*1_000_000 + temp.microsecond
+        return microseconds
+
+    @staticmethod
+    def msecs_to_str(msecs: int) -> str:
+        return str(timedelta(microseconds=msecs))
+

@@ -13,7 +13,6 @@ def main():
     if not mega_split_path:
         print('set mega_split in .env')
         sys.exit(1)
-    print(mega_split_path)
     old_soap_split = load_split(mega_split_path)
     old_run = Run(bs=old_soap_split)
     old_run.save_to_file('new_split.lss')

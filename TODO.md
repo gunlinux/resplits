@@ -7,13 +7,9 @@
 - [x] split loader
 - [x] split render 
 - [x] split saver
-- [ ] subsplits to single splits
-- [ ] best run VIEW
-- [ ] megasplit to levels
+- [x] best run VIEW
 - [ ] levels => megasplit
-- [ ] metadata load from bs [afterparty]
-- [ ] how to io.split will parse single level with random ID
-- [ ] split.io stats be like https://splits.io/b0if
+- [ ] subsplits to single splits
 
 
 ## Split structure
