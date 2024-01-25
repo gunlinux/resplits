@@ -170,10 +170,12 @@ class Run:
                 self.levels.append(segment.name)
 
     def get_level_pb(self, name):
+        # get full level best time
         runs = {}
         calc = {}
         for segment in self.segments:
-            if segment.name.startswith(f'-{name}_'):
+            print(segment.name)
+            if segment.name.startswith(f'-{name}_') or segment.name == name:
                 for time in segment.segmentshistory:
                     if runs.get(time.id):
                         runs[time.id] += time.get_gametime()
