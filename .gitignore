@@ -6,3 +6,4 @@ venv
 .env
 .idea
 __pycache__
+.vim
