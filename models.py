@@ -1,4 +1,5 @@
 import os
+import copy
 from jinja2 import Template
 from dataclasses import dataclass
 from datetime import datetime, timedelta
@@ -116,6 +117,7 @@ class Segment:
 
 @dataclass
 class Run:
+    name: str
     offset: str
     attempt_count: int
     attempt_history: list[Attempt]
@@ -125,11 +127,14 @@ class Run:
     game_name: str = ''
     category_name: str = ''
     # TODO ADD PB
+    updated: bool = False
 
-    def __init__(self, bs=None):
+    def __init__(self, bs=None, name=''):
         if not bs:
             return
         bsrun = bs.Run
+        if name:
+            self.name = name
         self.game_icon = self.__load_value(bsrun.GameIcon, '')
         self.game_name = self.__load_value(bsrun.GameName)
         self.category_name = self.__load_value(bsrun.CategoryName)
@@ -212,6 +217,7 @@ class Run:
                           attempt_history=attempt_history)
 
     def save_to_file(self, path):
+        print(f'saving to file {path}')
         render = self.render()
         with open(path, 'w') as f:
             f.write(render)
@@ -231,4 +237,26 @@ class Run:
     @staticmethod
     def msecs_to_str(msecs: int) -> str:
         return str(timedelta(microseconds=msecs))
+
+
+def get_chapter(run: Run, name:str):
+    new_run = copy.deepcopy(run)
+    new_run.attempt_history = []
+    new_segments = []
+    for segment in new_run.segments:
+        if segment.name.startswith(f'-{name}_') or segment.name == name:
+            new_segments.append(segment)
+    new_run.segments = new_segments
+    if name != 'C1':
+        load_segment = copy.deepcopy(new_run.segments[0])
+        load_segment.name = f'-{name}_load'
+        load_segment.bestsegmenttime.Gametime = '00:00:00.0000000'
+        new_run.segments.insert(0, load_segment)
+    for segment in new_run.segments:
+        segment.segmentshistory = []
+        segment.splittimes = {}
+        segment.split_times = {}
+    new_run.save_to_file(f'{name}.lss')
+    return new_run
+
 

@@ -3,8 +3,8 @@
   <GameIcon {% if obj.game_icon %}>{{obj.game_icon}}</GameIcon>{% else %}/>{% endif %}
   <GameName>{{obj.game_name}}</GameName>
   <CategoryName>{{obj.category_name}}</CategoryName>
-  <LayoutPath />
-  {# <LayoutPath {% if obj.layout_path -%} >{{obj.layout_path}}</LayoutPath>{% else -%} /> {% endif -%} #}
+  <LayoutPath {% if obj.layout_path -%} >{{obj.layout_path}}</LayoutPath>{% else -%} /> {% endif -%} 
+
   <Metadata>
     <Run id="" />
     <Platform usesEmulator="False">PC</Platform>

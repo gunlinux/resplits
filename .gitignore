@@ -1,5 +1,8 @@
 mega.lss
 lvls
+venv
+*.lss
+*.lsl
 .env
 .idea
 __pycache__

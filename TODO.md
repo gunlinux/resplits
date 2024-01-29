@@ -8,8 +8,8 @@
 - [x] split render 
 - [x] split saver
 - [x] best run VIEW
-- [ ] levels => megasplit
-- [ ] subsplits to single splits
+- [x] levels => megasplit
+- [x] subsplits to single splits
 
 
 ## Split structure
