@@ -11,7 +11,7 @@ TPL_DIR = 'tpls'
 
 
 def render_tpl(tpl, **kwargs):
-    with open(os.path.join(TPL_DIR, tpl)) as file:
+    with open(os.path.join(TPL_DIR, tpl), encoding="utf-8") as file:
         template = Template(file.read())
     return template.render(**kwargs)
 
@@ -87,12 +87,6 @@ class Segment:
                     self.segmentshistory = self.__get_segments_history(child)
                 if child.name.lower() == 'splittimes':
                     self.split_times = self.__get_splittimes(child)
-
-    def __find(self, bs, name):
-        tag = bs.find(name)
-        if not tag or not tag.contents:
-            return None
-        return tag.contents[0]
 
     def __get_segments_history(self, bs):
         runtimes = []
@@ -202,7 +196,6 @@ class Run:
                 gold += segment.bestsegmenttime.get_gametime()
         return gold
 
-
     def get_levels_pb(self):
         return {level: self.get_msecs(self.get_level_pb(level)) for level in self.levels}
 
@@ -219,7 +212,7 @@ class Run:
     def save_to_file(self, path):
         print(f'saving to file {path}')
         render = self.render()
-        with open(path, 'w') as f:
+        with open(path, 'w', encoding='utf-8') as f:
             f.write(render)
 
     @property
@@ -239,7 +232,7 @@ class Run:
         return str(timedelta(microseconds=msecs))
 
 
-def get_chapter(run: Run, name:str):
+def get_chapter(run: Run, name: str):
     new_run = copy.deepcopy(run)
     new_run.attempt_history = []
     new_segments = []
@@ -258,5 +251,3 @@ def get_chapter(run: Run, name:str):
         segment.split_times = {}
     new_run.save_to_file(f'{name}.lss')
     return new_run
-
-

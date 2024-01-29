@@ -16,7 +16,7 @@ def main():
     old_soap_split = load_split(mega_split_path)
     old_run = Run(bs=old_soap_split)
     for level in old_run.levels:
-        ch1 = get_chapter(old_run, level)
+        get_chapter(old_run, level)
 
 
 if __name__ == '__main__':

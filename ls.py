@@ -12,7 +12,7 @@ def read_xml(filename):
 
 
 def save_xml(soup, filename):
-    with open(filename, 'w') as output_file:
+    with open(filename, 'w', encoding='utf-8') as output_file:
         output_file.write(soup.prettify())
 
 

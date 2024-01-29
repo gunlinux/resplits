@@ -8,7 +8,6 @@ from models import Run
 load_dotenv()
 
 
-
 wrs = {
     "C1": "00:0:40.960",
     "C2": "00:1:56.810",
@@ -29,7 +28,8 @@ wrs = {
     "C14": "00:3:54.150",
 }
 
-def get_comp(run, rez):
+
+def get_comp(rez):
     wrs_with_msecs = {level: Run.get_msecs(value) for level, value in wrs.items()}
     diffs = {}
     for level, value in wrs_with_msecs.items():
@@ -51,9 +51,9 @@ def main():
     run = Run(bs=old_soap_split)
     rez = run.get_levels_pb()
     golds = run.get_levels_golds()
-    get_comp(run, rez)
+    get_comp(rez)
     print()
-    get_comp(run, golds)
+    get_comp(golds)
     print(f'attemtpted counts {run.attempt_count}')
     print(f'segments count: {run.segments_count}')
 
