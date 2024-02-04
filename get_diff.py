@@ -35,6 +35,7 @@ def get_comp(rez):
     for level, value in wrs_with_msecs.items():
         diffs[level] = value - rez[level]
 
+
     d = dict(sorted(diffs.items(), key=lambda item: item[1]))
     for item, value in d.items():
         d[item] = value/1_000_000
@@ -51,8 +52,9 @@ def main():
     run = Run(bs=old_soap_split)
     rez = run.get_levels_pb()
     golds = run.get_levels_golds()
+    print('pbs diff')
     get_comp(rez)
-    print()
+    print('golds diff')
     get_comp(golds)
     print(f'attemtpted counts {run.attempt_count}')
     print(f'segments count: {run.segments_count}')
