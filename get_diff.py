@@ -35,7 +35,6 @@ def get_comp(rez):
     for level, value in wrs_with_msecs.items():
         diffs[level] = value - rez[level]
 
-
     d = dict(sorted(diffs.items(), key=lambda item: item[1]))
     for item, value in d.items():
         d[item] = value/1_000_000

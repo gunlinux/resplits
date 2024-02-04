@@ -3,6 +3,7 @@ import copy
 from jinja2 import Template
 from dataclasses import dataclass
 from datetime import datetime, timedelta
+from typing import Optional, Any
 from bs4 import Tag
 
 
@@ -18,11 +19,11 @@ def render_tpl(tpl, **kwargs):
 
 @dataclass
 class RunTime:
-    id: int = None
+    id: Optional[int] = None
     Realtime: str = ''
     Gametime: str = ''
 
-    def __init__(self, bs=None):
+    def __init__(self, bs=None) -> None:
         if bs is None:
             return
 
@@ -47,11 +48,11 @@ class Attempt:
     id: int
     started: datetime
     ended: datetime
-    isEndedSynced: False
-    isStartedSynced: True
-    runtime: RunTime = None
+    isEndedSynced: bool = False
+    isStartedSynced: bool = True
+    runtime: Optional[RunTime] = None
 
-    def __init__(self, bs=None):
+    def __init__(self, bs=None) -> None:
         if bs is None:
             print('DANILA A U CRAZY')
             return
@@ -67,20 +68,20 @@ class Attempt:
 @dataclass
 class Segment:
     split_times: dict[str, RunTime]
-    segmentshistory: list[RunTime] = None
+    segmentshistory: Optional[list[RunTime]] = None
     name: str = ''
     icon: str = ''
-    bestsegmenttime: RunTime = None
+    bestsegmenttime: Optional[RunTime] = None
 
-    def __init__(self, bs=None):
+    def __init__(self, bs=None) -> None:
         if bs is None:
             return
         for child in bs.children:
             if isinstance(child, Tag):
                 if child.name.lower() == 'name' and child.contents:
-                    self.name = child.contents[0]
+                    self.name = str(child.contents[0])
                 if child.name.lower() == 'icon' and child.contents:
-                    self.icon = child.contents[0]
+                    self.icon = str(child.contents[0])
                 if child.name.lower() == 'bestsegmenttime' and child.contents:
                     self.bestsegmenttime = RunTime(child)
                 if child.name.lower() == 'segmenthistory':
@@ -88,7 +89,7 @@ class Segment:
                 if child.name.lower() == 'splittimes':
                     self.split_times = self.__get_splittimes(child)
 
-    def __get_segments_history(self, bs):
+    def __get_segments_history(self, bs) -> list[RunTime]:
         runtimes = []
         for child in bs.children:
             if child == '\n':
@@ -123,23 +124,23 @@ class Run:
     # TODO ADD PB
     updated: bool = False
 
-    def __init__(self, bs=None, name=''):
+    def __init__(self, bs=None, name='') -> None:
         if not bs:
             return
         bsrun = bs.Run
         if name:
             self.name = name
-        self.game_icon = self.__load_value(bsrun.GameIcon, '')
-        self.game_name = self.__load_value(bsrun.GameName)
-        self.category_name = self.__load_value(bsrun.CategoryName)
-        self.layout_path = self.__load_value(bsrun.LayoutPath)
-        self.offset = self.__load_value(bsrun.Offset)
-        self.attempt_count = self.__load_value(bsrun.AttemptCount)
+        self.game_icon = str(self.__load_value(bsrun.GameIcon, ''))
+        self.game_name = str(self.__load_value(bsrun.GameName))
+        self.category_name = str(self.__load_value(bsrun.CategoryName))
+        self.layout_path = str(self.__load_value(bsrun.LayoutPath))
+        self.offset = str(self.__load_value(bsrun.Offset))
+        self.attempt_count = int(self.__load_value(bsrun.AttemptCount))
         self.attempt_history = self.__load_attemtps(bsrun.AttemptHistory)
         self.segments = self.__load_segments(bsrun.Segments)
         self.get_levels()
 
-    def __load_value(self, value, default=None):
+    def __load_value(self, value, default=None) -> Any:
         if not value or not value.contents:
             return default
         return value.contents[0]
@@ -162,18 +163,20 @@ class Run:
             segments.append(segment)
         return segments
 
-    def get_levels(self):
+    def get_levels(self) -> None:
         self.levels = []
         for segment in self.segments:
             if segment.name.startswith('C'):
                 self.levels.append(segment.name)
 
-    def get_level_pb(self, name):
+    def get_level_pb(self, name: str) -> str:
         # get full level personal best time
         runs = {}
         calc = {}
         for segment in self.segments:
             if segment.name.startswith(f'-{name}_') or segment.name == name:
+                if not segment.segmentshistory:
+                    return ''
                 for time in segment.segmentshistory:
                     if runs.get(time.id):
                         runs[time.id] += time.get_gametime()
@@ -193,7 +196,8 @@ class Run:
         gold = 0
         for segment in self.segments:
             if segment.name.startswith(f'-{name}_') or segment.name == name:
-                gold += segment.bestsegmenttime.get_gametime()
+                if segment.bestsegmenttime:
+                    gold += segment.bestsegmenttime.get_gametime()
         return gold
 
     def get_levels_pb(self):

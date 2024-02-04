@@ -22,6 +22,8 @@ def update_main(mega,  runs: list[Run]):
     for run in runs:
         for segment in run.segments:
             segment_bs = segment.bestsegmenttime
+            if not segment_bs:
+                continue
             bs = segment_bs.get_gametime()
             for main_segment in mega.segments:
                 main_bs = main_segment.bestsegmenttime
@@ -39,6 +41,8 @@ def update_runs(mega,  runs: list[Run]):
     for run in runs:
         for segment in run.segments:
             segment_bs = segment.bestsegmenttime
+            if not segment_bs:
+                continue
             bs = segment_bs.get_gametime()
             for main_segment in mega.segments:
                 main_bs = main_segment.bestsegmenttime

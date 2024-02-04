@@ -17,39 +17,6 @@ def load_levels(path, levels):
     return runs
 
 
-def update_main(mega,  runs: list[Run]):
-    s = 0
-    for run in runs:
-        for segment in run.segments:
-            bs = segment.bestsegmenttime.get_gametime()
-            for main_segment in mega.segments:
-                main_segment_bs = main_segment.bestsegmenttime
-                if main_segment.name == segment.name and main_segment_bs.get_gametime() > bs:
-                    segment_bs = segment.bestsegmenttime
-                    print(f'{segment.name}  {main_segment_bs.Gametime} > {segment_bs.Gametime}')
-                    s += main_segment_bs.get_gametime() - segment_bs.get_gametime()
-                    main_segment.bestsegmenttime.Gametime = segment.bestsegmenttime.Gametime
-    print(f'improved  main run time by {Run.msecs_to_str(s)}')
-    return mega
-
-
-def update_runs(mega,  runs: list[Run]):
-    print('Updating  single  lines')
-    s = 0
-    for run in runs:
-        for segment in run.segments:
-            bs = segment.bestsegmenttime.get_gametime()
-            for main_segment in mega.segments:
-                main_segment_bs = main_segment.bestsegmenttime
-                if main_segment.name == segment.name and main_segment_bs.get_gametime() < bs:
-                    segment_bs = segment.bestsegmenttime
-                    print(f'{segment.name}  {segment_bs.Gametime} > {main_segment_bs.Gametime}')
-                    s += segment_bs.get_gametime() - main_segment.bestsegmenttime.get_gametime()
-                    segment.bestsegmenttime.Gametime = main_segment.bestsegmenttime.Gametime
-    print(f'improved  runs time by {Run.msecs_to_str(s)}')
-    return runs
-
-
 def main():
     mega_split_path = os.environ.get('mega_split')
     if not mega_split_path:
